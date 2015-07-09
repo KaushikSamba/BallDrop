@@ -2,6 +2,7 @@ package com.kaushiksamba.game;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -43,6 +44,8 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
     private long startPauseTimer = 0;
     private boolean pause = false;
     private boolean shouldPause = false;
+    private boolean shouldUpdate = true;
+    private boolean isHighScore = false;
 
 
     public Gamepanel(Context context)
@@ -158,7 +161,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
         }
 
 //        else if(!isPlaying && !pause)
-        else if(!isPlaying)
+        else if(!isPlaying)         //Resetting the game
         {
             float yClick = event.getY();
             System.out.println(getHeight()/4-50);
@@ -166,10 +169,10 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             System.out.println(yClick);
             if(yClick > getHeight()/4-50 && yClick < getHeight()/ 4 + 30)
             {
-                isPlaying = true;
                 score = 0;
-                level = 0;
-                itemsList.clear();
+                isHighScore = false;
+                shouldUpdate = true;
+                isPlaying = true;
             }
         }
 
@@ -224,7 +227,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
                 itemsList.get(i).update();
                 if (itemsList.get(i).getY() > HEIGHT)     //If a ball falls off the screen
                 {
-                    itemsList.remove(i);
+                    itemsList.clear();
                     isPlaying = false;                      //Player loses
                     System.out.println("Fell off screen");
                     break;
@@ -332,8 +335,33 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             canvas.drawText("PRESS LEFT FOR BLUE BALLS", 25, HEIGHT / 3 * 2 + 30, paint1);
             canvas.drawText("DON'T LET THE BALLS FALL!", 25, HEIGHT / 3 * 2 + 60, paint1);
 
+
+            if(isHighScore)
+            {
+                canvas.save();
+                canvas.rotate(-56, 35, HEIGHT);
+                paint1.setTextSize(60);
+                paint1.setColor(Color.GREEN);
+                canvas.drawText("NEW HIGH SCORE!", 35, HEIGHT, paint1);
+                canvas.restore();
+            }
 //            newGame();
-            itemsList.clear();
+            if(shouldUpdate)
+            {
+                SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+                int highscore = sharedPreferences.getInt("High Score", 0);
+                if(score>highscore)
+                {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("High Score",score);
+                    editor.apply();
+                    isHighScore = true;
+                }
+//                isPlaying = true;
+                itemsList.clear();
+                level=0;
+                shouldUpdate = false;
+            }
         }
     }
 }

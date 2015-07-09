@@ -1,12 +1,14 @@
 package com.kaushiksamba.game;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -15,6 +17,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         Button button = (Button) findViewById(R.id.first_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -23,6 +27,16 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefsFile",MODE_PRIVATE);
+        int highscore = sharedPreferences.getInt("High Score",0);
+        TextView textView = (TextView) findViewById(R.id.high_score);
+        textView.setText(Integer.toString(highscore));
     }
 
     @Override
@@ -40,7 +54,13 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.reset_scores)
+        {
+            SharedPreferences.Editor editor = getSharedPreferences("MyPrefsFile",MODE_PRIVATE).edit();
+            editor.putInt("High Score",0);
+            editor.apply();
+            TextView textView = (TextView) findViewById(R.id.high_score);
+            textView.setText("0");
             return true;
         }
 

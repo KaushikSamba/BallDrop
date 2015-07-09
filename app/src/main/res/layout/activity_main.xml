@@ -13,4 +13,13 @@
         android:text="@string/play_string"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/first_button"
+        android:id="@+id/high_score"
+        android:layout_centerHorizontal="true"
+        android:text="@string/hello_world"
+        android:textSize="60sp"
+        />
 </RelativeLayout>

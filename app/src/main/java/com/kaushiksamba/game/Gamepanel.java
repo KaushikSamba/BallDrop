@@ -42,6 +42,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
 //    private boolean ready = false;
     private long startPauseTimer = 0;
     private boolean pause = false;
+    private boolean shouldPause = false;
 
 
     public Gamepanel(Context context)
@@ -156,22 +157,22 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             System.out.println("Score: " + score);
         }
 
+//        else if(!isPlaying && !pause)
         else if(!isPlaying)
         {
-            isPlaying = true;
-            score = 0;
-            level = 0;
-            itemsList.clear();
-
+            float yClick = event.getY();
+            System.out.println(getHeight()/4-50);
+            System.out.println(getHeight()/4+30);
+            System.out.println(yClick);
+            if(yClick > getHeight()/4-50 && yClick < getHeight()/ 4 + 30)
+            {
+                isPlaying = true;
+                score = 0;
+                level = 0;
+                itemsList.clear();
+            }
         }
 
-/*
-        if(event.getAction()==MotionEvent.ACTION_DOWN)
-        {
-            item.resetAccY();
-            return true;
-        }
-*/
         return super.onTouchEvent(event);
     }
 
@@ -202,6 +203,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             //        item.update();
 
             long itemElapsed = (System.nanoTime() - itemStartTime) / 1000000;
+//            if(itemElapsed > 650 - score/4 && !pause)
             if(itemElapsed > 650 - score/4)
 //            if (itemElapsed > 2000)
             {
@@ -229,7 +231,27 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
 
+        }
+/*
+        if(score==20)
+        {
+            pauseGame();
+        }
+*/
+    }
 
+    public void pauseGame()
+    {
+        isPlaying = false;
+        pause = true;
+        if(startPauseTimer==0) startPauseTimer = System.nanoTime();
+        long elapsed = (System.nanoTime() - startPauseTimer)/1000000;
+        if(elapsed>2000)
+        {
+            isPlaying = true;
+            pause = false;
+            startPauseTimer = 0;
+            score+=5;
         }
     }
 
@@ -282,19 +304,25 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void drawText(Canvas canvas)
     {
-            Paint paint = new Paint();
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(30);
-            paint.setTypeface(Typeface.DEFAULT_BOLD);
-            canvas.drawText("SCORE: " + score, WIDTH / 4, HEIGHT - 20, paint);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(60);
+        paint.setTypeface(Typeface.DEFAULT_BOLD);
+        String scoreString = Integer.toString(score);
+        canvas.drawText(scoreString, WIDTH / 2 - 30*(scoreString.length()-1), HEIGHT - 20, paint);
 
         if(!isPlaying)
+//        if(!isPlaying && !pause)
         {
             Paint paint1 = new Paint();
+            paint1.setColor(Color.BLACK);
+            canvas.drawRect(15, HEIGHT / 4 - 50, WIDTH - 15, HEIGHT / 4 + 30, paint1);
             paint1.setTextSize(35);
+            paint1.setColor(Color.WHITE);
             paint1.setTypeface(Typeface.DEFAULT_BOLD);
             canvas.drawText("PRESS TO RETRY", 25, HEIGHT / 4, paint1);
 
+            paint1.setColor(Color.WHITE);
             paint1.setTextSize(55);
             canvas.drawText("YOU LOST",35,HEIGHT/2,paint1);
 //            System.out.println("Final score: " + score);

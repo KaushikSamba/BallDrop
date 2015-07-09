@@ -197,6 +197,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
         }
         return rXC;
     }
+
     public void update()
     {
         if(isPlaying)
@@ -223,7 +224,8 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
                 itemStartTime = System.nanoTime();
             }
 
-            for (int i = 0; i < itemsList.size(); i++) {
+            for (int i = 0; i < itemsList.size(); i++)
+            {
                 itemsList.get(i).update();
                 if (itemsList.get(i).getY() > HEIGHT)     //If a ball falls off the screen
                 {
@@ -235,12 +237,6 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             }
 
         }
-/*
-        if(score==20)
-        {
-            pauseGame();
-        }
-*/
     }
 
     public void pauseGame()

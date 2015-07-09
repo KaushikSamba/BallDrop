@@ -6,4 +6,11 @@
     <string name="title_activity_starting_class">StartingClass</string>
     <string name="play_string">PLAY</string>
     <string name="menu_reset_option">Reset scores</string>
+    <string name="intro_screen_string">Intro screen</string>
+    <string name="title_activity_intro_screen">IntroScreen</string>
+    <string name="title_activity_instructions">Instructions</string>
+    <string name="title_activity_high_score">HighScore</string>
+    <string name="zero">0</string>
+    <string name="instructionsText">--> Red and blue balls descend from the heavens\n--> Remove them lest they fall into the nether regions beneath your screen\n--> Tap starboard for red balls and port for blue ones\n--> By the way, starboard is right and port is left\n--> Enjoy!</string>
+    <string name="goBackButtonText">Go back</string>
 </resources>

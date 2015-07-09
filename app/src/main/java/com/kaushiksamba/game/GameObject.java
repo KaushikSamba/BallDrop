@@ -5,7 +5,7 @@ import android.graphics.Rect;
 
 public abstract class GameObject
 {
-    protected int x,y;
+    protected float x,y;
     protected int dx, dy;
     protected int width;
     protected int height;
@@ -20,12 +20,12 @@ public abstract class GameObject
         this.y = y;
     }
 
-    public int getX()
+    public float getX()
     {
         return x;
     }
 
-    public int getY()
+    public float getY()
     {
         return y;
     }
@@ -40,8 +40,10 @@ public abstract class GameObject
         return width;
     }
 
+/*
     public Rect getRectangle()
     {
         return new Rect(x,y,x+width,y+height);
     }
+*/
 }

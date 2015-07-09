@@ -24,7 +24,7 @@ public class FallingItem extends GameObject
     }
 */
 
-    public FallingItem(Bitmap res, int colour, int level, int x)
+    public FallingItem(Bitmap res, int colour, int level, float x)
     {
         y = 0;
         dy = 0;

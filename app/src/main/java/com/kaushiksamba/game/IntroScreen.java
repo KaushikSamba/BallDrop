@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class MainActivity extends Activity
+public class IntroScreen extends Activity
 {
 
     @Override
@@ -67,13 +67,13 @@ public class MainActivity extends Activity
             switch(position)
             {
                 case 0: x-=1;
-                    break;
+                        break;
                 case 1: x-=0.4;
-                    break;
+                        break;
                 case 2: x+=0.4;
-                    break;
+                        break;
                 case 3: x+=1;
-                    break;
+                        break;
             }
         }
     }
@@ -154,43 +154,43 @@ public class MainActivity extends Activity
                 canvas.scale(scaleFactorX, scaleFactorY);
 
                 //Drawing happens here
-                bg.draw(canvas);
-                for(Letter l : letterList)
-                {
-                    l.draw(canvas);
-                }
-
-                if(!mustUpdate)
-                {
-                    Paint paint = new Paint();
-                    paint.setColor(Color.BLACK);
-                    paint.setTextSize(55);
-                    float yCoord = letterList.get(0).getY()+45;
-                    canvas.drawText("D", letterList.get(0).getX(), yCoord, paint);
-                    canvas.drawText("R", letterList.get(1).getX(), yCoord, paint);
-                    canvas.drawText("O", letterList.get(2).getX(), yCoord, paint);
-                    canvas.drawText("P", letterList.get(3).getX(), yCoord, paint);
-                    if(firstIteration)
+                    bg.draw(canvas);
+                    for(Letter l : letterList)
                     {
-                        startTime = System.nanoTime();
-                        firstIteration = false;
+                        l.draw(canvas);
                     }
-                    if((System.nanoTime() - startTime)/1000000 > 1500)
+
+                    if(!mustUpdate)
                     {
+                        Paint paint = new Paint();
+                        paint.setColor(Color.BLACK);
+                        paint.setTextSize(55);
+                        float yCoord = letterList.get(0).getY()+45;
+                        canvas.drawText("D", letterList.get(0).getX(), yCoord, paint);
+                        canvas.drawText("R", letterList.get(1).getX(), yCoord, paint);
+                        canvas.drawText("O", letterList.get(2).getX(), yCoord, paint);
+                        canvas.drawText("P", letterList.get(3).getX(), yCoord, paint);
+                        if(firstIteration)
+                        {
+                            startTime = System.nanoTime();
+                            firstIteration = false;
+                        }
+                        if((System.nanoTime() - startTime)/1000000 > 1500)
+                        {
 //                            System.out.println("Width = " + getWidth());
 //                            System.out.println("yCoord = " + yCoord);
-                        canvas.drawRect(10, HEIGHT / 5 - 40, WIDTH - 10, HEIGHT / 5 + 20, paint);
-                        canvas.drawRect(10, HEIGHT / 5 + 30, WIDTH - 10, HEIGHT / 5 + 90, paint);
-                        canvas.drawRect(10, HEIGHT - 80, WIDTH - 10, HEIGHT - 15, paint);
-                        paint.setTextSize(35);
-                        paint.setColor(Color.WHITE);
-                        canvas.drawText("PLAY GAME", 15, HEIGHT / 5 + 3, paint);
-                        paint.setTextSize(28);
-                        canvas.drawText("INSTRUCTIONS", 12, HEIGHT / 5 + 70, paint);
-                        paint.setTextSize(34);
-                        canvas.drawText("HIGH SCORE",11,HEIGHT-35,paint);
+                            canvas.drawRect(10, HEIGHT / 5 - 40, WIDTH - 10, HEIGHT / 5 + 20, paint);
+                            canvas.drawRect(10, HEIGHT / 5 + 30, WIDTH - 10, HEIGHT / 5 + 90, paint);
+                            canvas.drawRect(10, HEIGHT - 80, WIDTH - 10, HEIGHT - 15, paint);
+                            paint.setTextSize(35);
+                            paint.setColor(Color.WHITE);
+                            canvas.drawText("PLAY GAME", 15, HEIGHT / 5 + 3, paint);
+                            paint.setTextSize(28);
+                            canvas.drawText("INSTRUCTIONS", 12, HEIGHT / 5 + 70, paint);
+                            paint.setTextSize(34);
+                            canvas.drawText("HIGH SCORE",11,HEIGHT-35,paint);
+                        }
                     }
-                }
                 canvas.restoreToCount(savedState);
             }
         }
@@ -202,10 +202,10 @@ public class MainActivity extends Activity
             for(int i=0;i<letterList.size();i++)
             {
                 if(letterList.get(i).getY() <= HEIGHT*3/5)letterList.get(i).update();
-                else
-                {
-                    mustUpdate = false;
-                }
+                    else
+                    {
+                        mustUpdate = false;
+                    }
             }
         }
 

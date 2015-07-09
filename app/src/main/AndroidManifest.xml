@@ -19,7 +19,19 @@
         <activity
             android:name=".StartingClass"
             android:label="@string/title_activity_starting_class"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".IntroScreen"
+            android:label="@string/title_activity_intro_screen" >
+        </activity>
+        <activity
+            android:name=".Instructions"
+            android:label="@string/title_activity_instructions" >
+        </activity>
+        <activity
+            android:name=".HighScore"
+            android:label="@string/title_activity_high_score" >
         </activity>
     </application>
 

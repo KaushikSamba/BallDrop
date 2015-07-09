@@ -60,6 +60,7 @@ public class MainThread extends Thread
                     catch (Exception e) { e.printStackTrace();}
                 }
             }
+
             timeMillis = (System.nanoTime() - startTime)/1000000;
             waitTime = targetTime - timeMillis;
 

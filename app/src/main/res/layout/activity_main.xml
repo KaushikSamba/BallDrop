@@ -8,6 +8,15 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/intro_screen_button"
+        android:text="@string/intro_screen_string"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/first_button"
         android:layout_centerInParent="true"
         android:text="@string/play_string"
@@ -21,5 +30,6 @@
         android:layout_centerHorizontal="true"
         android:text="@string/hello_world"
         android:textSize="60sp"
+        android:layout_marginTop="15dp"
         />
 </RelativeLayout>

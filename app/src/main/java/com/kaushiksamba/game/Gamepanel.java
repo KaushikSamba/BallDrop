@@ -20,10 +20,10 @@ import java.util.Random;
 /*
 List of things to do now.
     1. Enable click to remove ball. [DONE]
-    2. Score increments.
-    3. Randomize red and blue ball generation.
-    4. Ball to bottom = death.
-    5. Score-level-speed relationships.
+    2. Score increments.            [DONE]
+    3. Randomize red and blue ball generation.  [DONE]
+    4. Ball to bottom = death.      [DONE]
+    5. Score-level-speed relationships. [DONE]
  */
 
 public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback

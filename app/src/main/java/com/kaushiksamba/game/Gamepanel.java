@@ -39,7 +39,10 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
     private long itemStartTime;
     private Random rand = new Random();
     private boolean isPlaying = true;
-    private boolean ready = false;
+//    private boolean ready = false;
+    private long startPauseTimer = 0;
+    private boolean pause = false;
+
 
     public Gamepanel(Context context)
     {
@@ -159,7 +162,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             score = 0;
             level = 0;
             itemsList.clear();
-            ready = true;
+
         }
 
 /*
@@ -225,6 +228,8 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
                     break;
                 }
             }
+
+
         }
     }
 
@@ -244,9 +249,35 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             {
                 fi.draw(canvas);
             }
+            if(isPlaying) drawIntro(canvas);
             drawText(canvas);
             canvas.restoreToCount(savedstate);
         }
+    }
+
+    private void drawIntro(Canvas canvas)
+    {
+        Paint paint = new Paint();
+        //Red circle on the right
+/*
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(2 * WIDTH / 3 + 45, HEIGHT / 5 * 3, 50, paint);
+        paint.setTextSize(20);
+        paint.setColor(Color.BLACK);
+        canvas.drawText("CLICK",2*WIDTH/3  + 25,HEIGHT/5*3,paint);
+*/
+        canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.redclickball), 2 * WIDTH / 3, HEIGHT / 5 * 3, paint);
+
+        //Blue circle on the left
+/*        paint.setColor(Color.BLUE);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(WIDTH / 3 - 50, HEIGHT / 5 * 3, 50, paint);
+        paint.setTextSize(20);
+        paint.setColor(Color.BLACK);
+        canvas.drawText("CLICK", 25,HEIGHT/5*3,paint);
+*/
+        canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.blueclickball), 6, HEIGHT/5*3, paint);
     }
 
     public void drawText(Canvas canvas)

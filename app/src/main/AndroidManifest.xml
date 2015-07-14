@@ -33,6 +33,10 @@
             android:name=".HighScore"
             android:label="@string/title_activity_high_score" >
         </activity>
+        <activity
+            android:name=".DifficultySelection"
+            android:label="@string/title_activity_difficulty_selection">
+        </activity>
     </application>
 
 </manifest>

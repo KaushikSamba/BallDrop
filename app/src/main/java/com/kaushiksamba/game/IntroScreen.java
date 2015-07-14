@@ -7,10 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -89,7 +86,6 @@ public class IntroScreen extends Activity
         private long startTime;
         private boolean firstIteration = true;
 
-
         public introDisplayView(Context context)
         {
             super(context);
@@ -106,7 +102,7 @@ public class IntroScreen extends Activity
                 {
                     float yCoord = event.getY();
                     float height = getHeight();
-                    float scaleFactorX = height/HEIGHT;
+                    float scaleFactorY = height/HEIGHT;
 /*
                     System.out.println("1top: " + (height/5-40));
                     System.out.println("1bot: " + (height/5+20));
@@ -116,25 +112,30 @@ public class IntroScreen extends Activity
                     System.out.println("3bot: " + (height-15));
                     System.out.println("yCoord = " + yCoord);
 */
-                    if(yCoord > (HEIGHT/5-40)*scaleFactorX && yCoord < (HEIGHT/5+20)*scaleFactorX)
+                    if(yCoord > (HEIGHT/5-40)*scaleFactorY && yCoord < (HEIGHT/5+20)*scaleFactorY)
                     {
                         //Play game
                         System.out.println("Play game");
                         Intent intent = new Intent(getContext(),StartingClass.class);
+//                        Intent intent = new Intent(getApplicationContext(),DifficultySelection.class);
+//                        Intent intent = new Intent(getApplicationContext(),Instructions.class);
+//                        System.out.println(intent.toString());
                         startActivity(intent);
                     }
-                    else if(yCoord > (HEIGHT/5+30)*scaleFactorX && yCoord < (HEIGHT/5+90)*scaleFactorX)
+                    else if(yCoord > (HEIGHT/5+30)*scaleFactorY && yCoord < (HEIGHT/5+90)*scaleFactorY)
                     {
                         //Instructions
                         System.out.println("Instructions");
                         Intent intent = new Intent(getContext(),Instructions.class);
+//                        Intent intent = new Intent(getContext(), DifficultySelection.class);
                         startActivity(intent);
                     }
-                    else if(yCoord > (HEIGHT-80)*scaleFactorX && yCoord < (HEIGHT - 15)*scaleFactorX)
+                    else if(yCoord > (HEIGHT-80)*scaleFactorY && yCoord < (HEIGHT - 15)*scaleFactorY)
                     {
                         //High Score
                         System.out.println("High score");
                         Intent intent = new Intent(getContext(),HighScore.class);
+//                        Intent intent = new Intent(getContext(), DifficultySelection.class);
                         startActivity(intent);
                     }
                 }

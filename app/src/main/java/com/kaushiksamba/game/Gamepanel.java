@@ -1,5 +1,6 @@
 package com.kaushiksamba.game;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -46,12 +48,33 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
     private boolean shouldPause = false;
     private boolean shouldUpdate = true;
     private boolean isHighScore = false;
+    private int createBallDelayTime;
+    private double scoreDivisionFraction;
+    private int difficulty;         //Easy, Medium, Hard, and Extreme Modes. Easy starts at 700 seconds delay; Medium - 650; Hard - 600; Extreme starts at 700 but enables switching.
+    private String difficulty_name = "";
 
-
-    public Gamepanel(Context context)
+    private void setBallDelayTime()
+    {
+        switch (difficulty)
+        {
+            case 0:     createBallDelayTime = 700;
+                        scoreDivisionFraction = 4;
+                        break;
+            case 1:     createBallDelayTime = 650;
+                        scoreDivisionFraction = 3.5;
+                        break;
+            case 2:     createBallDelayTime = 600;
+                        scoreDivisionFraction = 3;
+                        break;
+        }
+    }
+    public Gamepanel(Context context, int difficulty)
     {
         super(context);
         score = 0;
+        this.difficulty = difficulty;
+        setBallDelayTime();
+
         //Add callbacks to surfaceholder to "intercept" events
         getHolder().addCallback(this);
 
@@ -164,15 +187,23 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
         else if(!isPlaying)         //Resetting the game
         {
             float yClick = event.getY();
-            System.out.println(getHeight()/4-50);
-            System.out.println(getHeight()/4+30);
-            System.out.println(yClick);
-            if(yClick > getHeight()/4-50 && yClick < getHeight()/ 4 + 30)
+//            System.out.println(getHeight()/4-50);
+//            System.out.println(getHeight()/4+30);
+//            System.out.println(yClick);
+            final float scaleFactorY = getHeight()/(float)HEIGHT;
+            if(yClick > (HEIGHT/4-50)*scaleFactorY && yClick < (HEIGHT/4+30)*scaleFactorY)
             {
                 score = 0;
                 isHighScore = false;
                 shouldUpdate = true;
                 isPlaying = true;
+            }
+            else if(yClick > (HEIGHT*2/3 - 20)*scaleFactorY && yClick < (HEIGHT*2/3+60)*scaleFactorY)
+            {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, "Hey, I'm playing Ball Drop. It's an awesome game, so go ahead and download it! I scored " + Integer.toString(score) + " points on " + difficulty_name + "difficulty. Download it at #URL");
+                intent.setType("text/plain");
+                getContext().startActivity(Intent.createChooser(intent, "Share score with.."));
             }
         }
 
@@ -208,7 +239,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
 
             long itemElapsed = (System.nanoTime() - itemStartTime) / 1000000;
 //            if(itemElapsed > 650 - score/4 && !pause)
-            if(itemElapsed > 650 - score/4)
+            if(itemElapsed > createBallDelayTime - score/scoreDivisionFraction)
 //            if (itemElapsed > 2000)
             {
                 int colour = randomItemColour();
@@ -223,8 +254,7 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
                     }
                 itemStartTime = System.nanoTime();
             }
-
-            for (int i = 0; i < itemsList.size(); i++)
+            for(int i = 0; i < itemsList.size(); i++)
             {
                 itemsList.get(i).update();
                 if (itemsList.get(i).getY() > HEIGHT)     //If a ball falls off the screen
@@ -235,7 +265,6 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
                     break;
                 }
             }
-
         }
     }
 
@@ -299,17 +328,22 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
         canvas.drawText("CLICK", 25,HEIGHT/5*3,paint);
 */
         canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.blueclickball), 6, HEIGHT/5*3, paint);
+        //To draw the pause icon on the screen, currently above the score
     }
 
     public void drawText(Canvas canvas)
     {
+        //To draw the score on the screen
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setTextSize(60);
         paint.setTypeface(Typeface.DEFAULT_BOLD);
-        String scoreString = Integer.toString(score);
-        canvas.drawText(scoreString, WIDTH / 2 - 30*(scoreString.length()-1), HEIGHT - 20, paint);
-
+        if(score==0) canvas.drawText("0", WIDTH / 2 - 20, HEIGHT - 20, paint);
+            else
+            {
+                String scoreString = Integer.toString(score);
+                canvas.drawText(scoreString, WIDTH / 2 - 30 * (scoreString.length() - 1), HEIGHT - 20, paint);
+            }
         if(!isPlaying)
 //        if(!isPlaying && !pause)
         {
@@ -326,11 +360,18 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             canvas.drawText("YOU LOST",35,HEIGHT/2,paint1);
 //            System.out.println("Final score: " + score);
 //            canvas.drawText("YOU SCORED: " + score, WIDTH / 10, HEIGHT - 20, paint1);
+
+/*
             paint1.setTextSize(20);
             canvas.drawText("PRESS RIGHT FOR RED BALLS", 25, HEIGHT / 3 * 2, paint1);
             canvas.drawText("PRESS LEFT FOR BLUE BALLS", 25, HEIGHT / 3 * 2 + 30, paint1);
             canvas.drawText("DON'T LET THE BALLS FALL!", 25, HEIGHT / 3 * 2 + 60, paint1);
-
+*/
+            paint1.setColor(Color.BLACK);
+            canvas.drawRect(15, HEIGHT / 3 * 2 - 20, WIDTH - 15, HEIGHT / 3 * 2 + 60, paint1);
+            paint1.setColor(Color.WHITE);
+            paint1.setTextSize(35);
+            canvas.drawText("SHARE SCORE", WIDTH / 6, HEIGHT / 3 * 2 + 35, paint1);
 
             if(isHighScore)
             {
@@ -345,11 +386,22 @@ public class Gamepanel extends SurfaceView implements SurfaceHolder.Callback
             if(shouldUpdate)
             {
                 SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
-                int highscore = sharedPreferences.getInt("High Score", 0);
+                switch(difficulty)
+                {
+                    case 0: difficulty_name = "Easy";
+                            break;
+                    case 1: difficulty_name = "Medium";
+                            break;
+                    case 2: difficulty_name = "Hard";
+                            break;
+                    case 3: difficulty_name = "Extreme";
+                            break;
+                }
+                int highscore = sharedPreferences.getInt("High Score "+difficulty_name, 0);
                 if(score>highscore)
                 {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt("High Score",score);
+                    editor.putInt("High Score "+difficulty_name,score);
                     editor.apply();
                     isHighScore = true;
                 }

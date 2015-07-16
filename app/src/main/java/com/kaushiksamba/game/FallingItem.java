@@ -3,7 +3,7 @@ package com.kaushiksamba.game;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.kaushiksamba.game.Gamepanel;
+//import com.kaushiksamba.game.Gamepanel;
 
 public class FallingItem extends GameObject
 {
@@ -13,7 +13,7 @@ public class FallingItem extends GameObject
     private double accY;
     //    private boolean playing;
 //    private Animation animation;
-    private long startTime;
+//    private long startTime;
     private int level=0;
 //    private boolean up;
 
@@ -36,7 +36,7 @@ public class FallingItem extends GameObject
         this.colour = colour;
         bmp = res;
         this.level = level;
-        startTime = System.nanoTime();
+//        startTime = System.nanoTime();
     }
 
     public int getColour()

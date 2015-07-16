@@ -8,11 +8,13 @@ public class MainThread extends Thread
     private int FPS = 30;
     private double averageFPS;
     private SurfaceHolder surfaceHolder;
-    private Gamepanel gamepanel;
+//    private Gamepanel gamepanel;
+    private StartingClass.Gamepanel gamepanel;
     private boolean running;
     public static Canvas canvas;
 
-    public MainThread(SurfaceHolder surfaceHolder, Gamepanel gamepanel)
+//    public MainThread(SurfaceHolder surfaceHolder, Gamepanel gamepanel)
+    public MainThread(SurfaceHolder surfaceHolder, StartingClass.Gamepanel gamepanel)
     {
         super();
         this.surfaceHolder = surfaceHolder;

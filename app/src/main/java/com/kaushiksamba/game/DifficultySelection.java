@@ -53,18 +53,13 @@ public class DifficultySelection extends Activity
                 @Override
                 public void onClick(View v)
                 {
-                    //openGame(3);
-                    Toast.makeText(getApplicationContext(),"Extreme disabled, kanna",Toast.LENGTH_SHORT).show();
+                    openGame(3);
                 }
             });
         }
 
         public void openGame(int difficulty)
         {
-//            Intent intent = new Intent(this,StartingClass.class);
-//            intent.putExtra("Difficulty",difficulty);
-//            System.out.println(difficulty);
-//            startActivity(intent);
             setResult(difficulty);
             finish();
         }

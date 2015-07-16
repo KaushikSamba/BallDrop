@@ -95,7 +95,7 @@ public class StartingClass extends Activity
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        pause = false;
+                 //       pause = false;
                     }
                 })
                 .create().show();
@@ -115,31 +115,50 @@ public class StartingClass extends Activity
         private long itemStartTime;
         private Random rand = new Random();
         private boolean isPlaying = true;
+        private boolean isExtreme = false;
+        private boolean switched = false;
+        private boolean switching = false;
+        private long switchStartTime = 0;
+        private int nextSwitchScore;
         //    private boolean ready = false;
-        private long startPauseTimer = 0;
+//        private long startPauseTimer = 0;
 //        private boolean pause = false;
 //        private boolean shouldPause = false;
         private boolean shouldUpdate = true;
-        private long startPauseContinueTime=0;
+        private int textMoveUp=0;  //For the "Switch" message movement
+//        private long startPauseContinueTime=0;
         private boolean isHighScore = false;
         private int createBallDelayTime;
         private double scoreDivisionFraction;
-        private int difficulty;         //Easy, Medium, Hard, and Extreme Modes. Easy starts at 700 seconds delay; Medium - 650; Hard - 600; Extreme starts at 700 but enables switching.
+        private int difficulty;         //Easy, Medium, Hard, and Extreme Modes.
+                                        //Easy - 0; Medium - 1; Hard - 2; Extreme - 3;
         private String difficulty_name = "";
 
+
+        private void setNextSwitchScore()
+        {
+            if(score==0) nextSwitchScore=50 + rand.nextInt(5)*10;
+                else nextSwitchScore = score + 30 + rand.nextInt(6)*10;
+        }
         private void setBallDelayTime()
         {
+            //Easy starts at 700 seconds delay; Medium - 650; Hard - 600; Extreme starts at 700 but enables switching.
             switch (difficulty)
             {
                 case 0:     createBallDelayTime = 700;
-                    scoreDivisionFraction = 4;
-                    break;
+                            scoreDivisionFraction = 4;
+                            break;
                 case 1:     createBallDelayTime = 650;
-                    scoreDivisionFraction = 3.5;
-                    break;
+                            scoreDivisionFraction = 3.5;
+                            break;
                 case 2:     createBallDelayTime = 600;
-                    scoreDivisionFraction = 3;
-                    break;
+                            scoreDivisionFraction = 3;
+                            break;
+                case 3:     createBallDelayTime = 650;
+                            scoreDivisionFraction = 3.7;
+                            isExtreme = true;
+                            setNextSwitchScore();
+                            break;
             }
         }
         public Gamepanel(Context context, int difficulty)
@@ -202,6 +221,44 @@ public class StartingClass extends Activity
 
         }
 
+        private void removeBlueBall()
+        {
+            //Removing blue ball
+            if(itemsList.size()>0)
+            {
+                if(itemsList.get(0).getColour()==1)
+                {
+                    itemsList.remove(0);
+                    score+=10;
+                    if(score%40==0) level++;
+                }
+                else
+                {
+                    isPlaying = false;
+                }
+            }
+        }
+
+        private void removeRedBall()
+        {
+            //Removing red ball
+            if(itemsList.size()>0)
+            {
+                if(itemsList.get(0).getColour()==0)
+                {
+                    itemsList.remove(0);    //Removing the ball
+                    score+=10;              //Updating the score
+                    if(score%40==0)
+                    {
+                        level++;
+                    }
+                }
+                else
+                {
+                    isPlaying = false;
+                }
+            }
+        }
         @Override
         public boolean onTouchEvent(MotionEvent event)
         {
@@ -211,59 +268,50 @@ public class StartingClass extends Activity
                 float xClick = event.getX();
                 float left = getWidth()/3;
                 float right = getWidth()*2/3;
-                if(xClick < left)
+                if(!switched)
                 {
-                    //Removing blue ball
-                    if(itemsList.size()>0)
+                    if (xClick < left)
                     {
-                        if(itemsList.get(0).getColour()==1)
-                        {
-                            itemsList.remove(0);
-                            score+=10;
-                            if(score%40==0) level++;
-                        }
-                        else
-                        {
-//                        Toast.makeText(getContext(),"YOU LOSE",Toast.LENGTH_SHORT).show();
-                            isPlaying = false;
-                        }
+                        removeBlueBall();
                     }
-                }
-
-
-                else if(xClick > right && event.getY() < getHeight()/7.4)
-                {
-                    pause = true;
+                    else if (xClick > right && event.getY() < getHeight() / 7.4)
+                    {
+                        pause = true;
 //                    Toast.makeText(getContext(),"PAUSED",Toast.LENGTH_SHORT).show();
-                }
-
-                else if(xClick > right)
-                {
-                    //Removing red ball
-                    if(itemsList.size()>0)
-                    {
-                        if(itemsList.get(0).getColour()==0)
-                        {
-                            itemsList.remove(0);    //Removing the ball
-                            score+=10;              //Updating the score
-                            if(score%40==0)
-                            {
-                                level++;
-                            }
-                        }
-                        else
-                        {
-                            isPlaying = false;
-                        }
                     }
-
+                    else if (xClick > right)
+                    {
+                        removeRedBall();
+                    }
+                }
+                else        //Applicable only for extreme mode where the buttons and, hence, the button clicks change the ball removal.
+                {
+                    if (xClick < left)
+                    {
+                        removeRedBall();
+                    }
+                    else if (xClick > right && event.getY() < getHeight() / 7.4)
+                    {
+                        pause = true;
+                    }
+                    else if(xClick > right)
+                    {
+                        removeBlueBall();
+                    }
                 }
                 System.out.println("Score: " + score);
+                if(score == nextSwitchScore && isExtreme)
+                {
+                    pause = true;
+                    switched=!switched;
+                    switching = true;
+                }
             }
 
-            else if(pause)
+            else if(pause && !switching)
             {
                 pause = false;
+//                if(switching) switching = false;
             }
 //            else if(!isPlaying && !pause)
             else if(!isPlaying)         //Resetting the game
@@ -276,11 +324,17 @@ public class StartingClass extends Activity
                 if(yClick > (HEIGHT/4-50)*scaleFactorY && yClick < (HEIGHT/4+30)*scaleFactorY)
                 {
                     score = 0;
+                    nextSwitchScore=0;
+                    if(isExtreme)
+                    {
+                        setNextSwitchScore();
+                    }
+                    switched = false;
                     isHighScore = false;
                     shouldUpdate = true;
                     isPlaying = true;
                 }
-                else if(yClick > (HEIGHT*2/3 - 20)*scaleFactorY && yClick < (HEIGHT*2/3+60)*scaleFactorY)
+                else if(yClick > (HEIGHT/2 - 30)*scaleFactorY && yClick < (HEIGHT/2+50)*scaleFactorY)
                 {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.putExtra(Intent.EXTRA_TEXT, "Hey, I'm playing Ball Drop. It's an awesome game, so go ahead and download it! I scored " + Integer.toString(score) + " points on " + difficulty_name + "difficulty. Download it at #URL");
@@ -348,6 +402,22 @@ public class StartingClass extends Activity
                     }
                 }
             }
+            else
+            {
+                if(switching)
+                {
+                    if(switchStartTime==0) switchStartTime = System.nanoTime();
+                    if((System.nanoTime()-switchStartTime + score)/1000000 > 1200)
+                    {
+                        pause = false;
+//                        level--;
+                        switching = false;
+                        textMoveUp=0;
+                        switchStartTime = 0;
+                        setNextSwitchScore();
+                    }
+                }
+            }
         }
 
         @Override
@@ -364,43 +434,53 @@ public class StartingClass extends Activity
 //            item.draw(canvas);
                 if(!pause)
                 {
-                    for (FallingItem fi : itemsList) {
+                    for (FallingItem fi : itemsList)
+                    {
                         fi.draw(canvas);
                     }
                     if(isPlaying) drawIntro(canvas);
                 }
                 else
                 {
-                    if(isPlaying) bg.setToBlack(canvas,HEIGHT,WIDTH);
+                    if(isPlaying && !switching) bg.setToBlack(canvas,HEIGHT,WIDTH);
+                    if(switching)
+                    {
+                        drawIntro(canvas);
+                        drawSwitchingText(canvas);
+                        textMoveUp+=3;
+                    }
                 }
                 drawText(canvas);
                 canvas.restoreToCount(savedstate);
             }
         }
 
+        private void drawSwitchingText(Canvas canvas)
+        {
+            Paint paint1 = new Paint();
+            paint1.setColor(Color.RED);
+            paint1.setTextSize(55);
+            canvas.drawText("SWITCH",WIDTH/7,HEIGHT/9*4 - textMoveUp,paint1);
+            canvas.drawText("BITCH",WIDTH/3, HEIGHT/9*5 - textMoveUp,paint1);
+        }
         private void drawIntro(Canvas canvas)
         {
             Paint paint = new Paint();
-            //Red circle on the right
-/*
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(2 * WIDTH / 3 + 45, HEIGHT / 5 * 3, 50, paint);
-        paint.setTextSize(20);
-        paint.setColor(Color.BLACK);
-        canvas.drawText("CLICK",2*WIDTH/3  + 25,HEIGHT/5*3,paint);
-*/
-            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.redclickball), 2 * WIDTH / 3, HEIGHT / 5 * 3, paint);
 
-            //Blue circle on the left
-/*        paint.setColor(Color.BLUE);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(WIDTH / 3 - 50, HEIGHT / 5 * 3, 50, paint);
-        paint.setTextSize(20);
-        paint.setColor(Color.BLACK);
-        canvas.drawText("CLICK", 25,HEIGHT/5*3,paint);
-*/
-            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.blueclickball), 6, HEIGHT/5*3, paint);
+            if(!switched)
+            {
+                //Red circle on the right
+                canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.redclickball), 2 * WIDTH / 3, HEIGHT / 5 * 3, paint);
+                //Blue circle on the left
+                canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.blueclickball), 6, HEIGHT / 5 * 3, paint);
+            }
+            else
+            {
+                //Blue circle on the right
+                canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.blueclickball), 2 * WIDTH / 3, HEIGHT / 5 * 3, paint);
+                //Red circle on the left
+                canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.redclickball), 6, HEIGHT / 5 * 3, paint);
+            }
             //To draw the pause icon on the top right of the screen
             canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.pauseicon), WIDTH/5*4, 10, paint);
         }
@@ -423,18 +503,16 @@ public class StartingClass extends Activity
             {
                 Paint paint1 = new Paint();
                 paint1.setColor(Color.BLACK);
-                canvas.drawRect(15, HEIGHT / 4 - 50, WIDTH - 15, HEIGHT / 4 + 30, paint1);
+                canvas.drawRect(WIDTH/(float)21.3, HEIGHT / 4 - 50, WIDTH - 15, HEIGHT / 4 + 30, paint1);
                 paint1.setTextSize(35);
                 paint1.setColor(Color.WHITE);
                 paint1.setTypeface(Typeface.DEFAULT_BOLD);
                 canvas.drawText("PRESS TO RETRY", 25, HEIGHT / 4, paint1);
 
-                paint1.setColor(Color.WHITE);
-                paint1.setTextSize(55);
-                canvas.drawText("YOU LOST",35,HEIGHT/2,paint1);
-//            System.out.println("Final score: " + score);
-//            canvas.drawText("YOU SCORED: " + score, WIDTH / 10, HEIGHT - 20, paint1);
-
+                paint1.setColor(Color.LTGRAY);
+                paint1.setTextSize(45);
+//                canvas.drawText("YOU LOST",35,HEIGHT/2,paint1);
+                canvas.drawText("YOU SCORED",WIDTH/(float)14,HEIGHT/3*2+60,paint1);
 /*
             paint1.setTextSize(20);
             canvas.drawText("PRESS RIGHT FOR RED BALLS", 25, HEIGHT / 3 * 2, paint1);
@@ -442,10 +520,12 @@ public class StartingClass extends Activity
             canvas.drawText("DON'T LET THE BALLS FALL!", 25, HEIGHT / 3 * 2 + 60, paint1);
 */
                 paint1.setColor(Color.BLACK);
-                canvas.drawRect(15, HEIGHT / 3 * 2 - 20, WIDTH - 15, HEIGHT / 3 * 2 + 60, paint1);
+//                canvas.drawRect(WIDTH/(float)21.3, HEIGHT / 3 * 2 - 20, WIDTH - 15, HEIGHT / 3 * 2 + 60, paint1);
+                canvas.drawRect(WIDTH/(float)21.3,HEIGHT/2-30,WIDTH-15,HEIGHT/2+50,paint1);
                 paint1.setColor(Color.WHITE);
                 paint1.setTextSize(35);
-                canvas.drawText("SHARE SCORE", WIDTH / 6, HEIGHT / 3 * 2 + 35, paint1);
+//                canvas.drawText("SHARE SCORE", WIDTH / 6, HEIGHT / 3 * 2 + 35, paint1);
+                canvas.drawText("SHARE SCORE",WIDTH/6,HEIGHT/2+25,paint1);
 
                 if(isHighScore)
                 {
@@ -487,5 +567,4 @@ public class StartingClass extends Activity
             }
         }
     }
-
 }
